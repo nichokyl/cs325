@@ -5,25 +5,23 @@
 #include <string>
 
 using namespace std;
-void algotest(vector<int>& firstLine, vector<int>& keyLine, vector<int>& ballLine){
+
+void algorithm1(vector<int>& firstLine, vector<int>& keyLine, vector<int>& ballLine){
     int lockerSize = firstLine[0];
     int keySize = firstLine[1];
     int ballSize = firstLine[2];
-    //need to open the ones that has a key with a balls in. We can merge that
-    //then calculate the distance between the balls relative to the keys
-    vector<int> ballLocker(lockerSize+1), keys(lockerSize+1), originalKeys(lockerSize+1);
+    vector<int> ballLocker(lockerSize+1), keys(lockerSize+1);
     for(int i = 0; i < lockerSize+1; i++){
         ballLocker[i] = 0;
         keys[i] = 0;
     }
     for(int i = 0; i < keySize; i++){
         keys[keyLine[i]] = 1;
-        originalKeys[keyLine[i]] = 1;
     }
     for(int i = 0; i < ballSize; i++){
         ballLocker[ballLine[i]] = 1;
     }
-    cout << "New Test Set:" << "\n";
+/*    cout << "New Test Set:" << "\n";
     cout << "BallSize:" << ballSize << "\n";
     cout << "KeySize:" << keySize << "\n";
 
@@ -32,28 +30,30 @@ void algotest(vector<int>& firstLine, vector<int>& keyLine, vector<int>& ballLin
         cout << ballLocker[i] << " ";
     }
     cout << "\n";
-
     cout << "Keys array:          ";
     for(int i = 1; i <= lockerSize; i++){
         cout << keys[i] << " ";
     }
     cout << "\n";
+*/
     //ALGORITHM START
-    int sum = 0;
-    for(int i = 0; i <= lockerSize; i++){
+    int result = 0;
+    for(int i = 1; i <= lockerSize; i++){
+        //if has a ball
         if(ballLocker[i] == 1){
+            //if ball has a key in a same location
             if(ballLocker[i] - keys[i] == 0){
                 keys[i+1] = 1;
-                keys[i-1] = 1;
+                //keys[i-1] = 1;
                 ballLocker[i] = 2;
-                sum++;
-            }else if((ballLocker[i] - keys[i]) == 1){
+                result++;
+            }else if((ballLocker[i] - keys[i]) == 1){ //if keys are somewhere else
                 int keyInFrontLoc = 0;
                 int keyInFront = 0;
                 int keyInBack = 0;
                 int keyInBackLoc = 0;
                 //find the nearest key forward from the current ball (i)
-                for(int j = i; j < lockerSize+1; j++){
+                for(int j = i; j <= lockerSize; j++){
                     if(keys[j] == 1){
                         keyInFront = 1;
                         keyInFrontLoc = j;
@@ -72,27 +72,84 @@ void algotest(vector<int>& firstLine, vector<int>& keyLine, vector<int>& ballLin
                 if(keyInBack == 1 && keyInFront == 1){
                     int calcForward = 1;
                     int calcBackward = 1;
-                    int temp = 0, loopCount = 0;
+                    int loopCount = 0, loopCount1 = 0;
                     //calculate the total distant of the balls to the initial key
                     for(int l = keyInBackLoc; l <= keyInFrontLoc; l++){
                         if(ballLocker[l] == 1){
-                            //cout << l << " ";
                             calcForward += l - calcForward;
                         }
-                        //loopCount++;
+                        loopCount++;
                     }
                     for(int l = keyInFrontLoc; l >= keyInBackLoc; l--){
                         if(ballLocker[l] == 1){
                             calcBackward += (keyInFrontLoc - l) - calcBackward;
                         }
-                        loopCount++;
+                        loopCount1++;
                     }
+                    //weird counting problem I have to add one to make it correct
+                    calcBackward++;
+                    int ballFound = 0, distKeyToBall = 0, distBallToKey, sum = 0, sumLeft = 0, sumRight = 0;
+                    //check the last option where using both keys is optimal
+                    for(int l = keyInBackLoc; l <= keyInFrontLoc; l++){
+                        if(ballLocker[l] == 1){
+                            ballFound = l;
+                            distKeyToBall = ballFound - keyInBackLoc;
+                            distBallToKey = keyInFrontLoc - ballFound;
+                            if(distBallToKey > distKeyToBall){
+                                sumLeft = distKeyToBall + 1;
+                            }else if(distBallToKey < distKeyToBall){
+                                sumRight = distBallToKey + 1;
+                                break;
+                            }else if(distKeyToBall == distBallToKey){
+                                sumLeft = distKeyToBall + 1;
+                            }
+                        }
+                    }
+                    sum = sumLeft + sumRight;
                     //cout << "Total for balls forward from the first key: "<< calcForward << "," << loopCount << "\n";
-                    cout << "Total for balls backward from the last key: "<< calcBackward << "," << loopCount << "\n";
+                    //cout << "Total for balls backward from the last key: "<< calcBackward << "," << loopCount1 << "\n";
+                    //cout << "Total for balls from both end : " << sum << "," << "\n";
+                    //update the balls and keys
+                    for(int n = keyInBackLoc; n <= keyInFrontLoc; n++){
+                        if(ballLocker[n] == 1){
+                            ballLocker[n] = 2;
+                        }
+                    }
+                    keys[keyInFrontLoc+1] = 1;
+                    result += min(sum, min(calcForward, calcBackward));
+                }else if(keyInBack == 1 && keyInFront == 0){
+                    int temp = 0;
+                    for(int n = keyInBackLoc; n <= lockerSize; n++){
+                        if(ballLocker[n] == 1){
+                            temp = n - keyInBackLoc + 1;
+                            ballLocker[n] = 2;
+                        }
+                        //update the keys
+                        keys[n+1] = 1;
+                        keys[n-1] = 1;
+                    }
+                    result += temp;
+                }else if(keyInBack == 0 && keyInFront == 1){
+                    result += keyInFrontLoc - i + 1;
+                    for(int n = i; n <= keyInFrontLoc; n++){
+                        if(ballLocker[n] == 1){
+                            ballLocker[n] = 2;
+                        }
+                        keys[n+1] = 1;
+                        keys[n-1] = 1;
+                    }
+
                 }
             }
         }
     }
+    ofstream myFile ("Results.txt", ios::out | ios::app);
+    if(myFile.is_open()){
+        myFile << result << ", ";
+    }else{
+        cout << "cant open the file";
+    }
+    myFile.close();
 }
 void algo1(vector<int>& firstLine, vector<int>& keyLine, vector<int>& ballLine, int lockerSize){
     //brute force
@@ -170,7 +227,7 @@ void algo1(vector<int>& firstLine, vector<int>& keyLine, vector<int>& ballLine, 
                     int keyInfront = 0;
                     int keyInBack = 0;
                     int lastBallBetweenKeysLoc = 0;
-                    int firstBallFound = i;
+                    //int firstBallFound = i;
                     int keyInBackLoc = 0;
                     int keyInFrontLoc = 0;
                     //find the nearest key forward from the current ball (i)
@@ -383,7 +440,9 @@ int main()
 {
     //run algorithms with testing file
       string line;
-      ifstream myfile ("dp_set1.txt");
+      //ifstream myfile ("dp_set1.txt");
+      //ifstream myfile ("dp_set2.txt");
+      ifstream myfile ("dp_set3.txt");
       int lockerSize = 0;
       if(myfile.is_open()){
           cout << "Run all algorithms with dp.txt file" << "\n";
@@ -426,7 +485,7 @@ int main()
                   sort(secondLine.begin(), secondLine.begin()+keySize);
                   sort(thirdLine.begin(), thirdLine.begin()+ballSize);
                   //algo1(firstLine, secondLine, thirdLine, lockerSize);
-                  algotest(firstLine, secondLine, thirdLine);
+                  algorithm1(firstLine, secondLine, thirdLine);
               }else{
                 /*stringstream ss(line);
                 string value;
@@ -446,8 +505,9 @@ int main()
           }
           myfile.close();
       }else{
-          cout << "can't open the testing.txt file (required testing.txt file to be in the same location in order to run) \n";
+          cout << "can't open the testing.txt file (required testing .txt file to be in the same location in order to run) \n";
       }
+
       /*
       vector<int>::const_iterator ci;
       for(ci = firstLine.begin(); ci!=firstLine.end(); ci++){
