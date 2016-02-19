@@ -3,15 +3,21 @@
 using namespace std;
 int method1(int arr1[], int arr2[], int n1, int n2){
     int smallestD = 100;
+    int loc1 = 0;
+    int loc2 = 0;
     for(int i = 0; i < n1; i++){
         for(int j = 0; j < n2; j++){
             int temp;
             temp = abs(arr1[i] + arr2[j]);
             if(temp < smallestD){
                 smallestD = temp;
+                loc1 = i;
+                loc2 = j;
             }
         }
     }
+    cout << "Location in the first list: " << loc1 + 1 << endl;
+    cout << "Location in the 2nd list: " << loc2 + 1 << endl;
     return smallestD;
 }
 
