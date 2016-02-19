@@ -7,7 +7,7 @@ DivAndCon(int arr[], int n){
 	int count = nHalf - 1;
 	//suffix array, calculate sum for the first half of the array
 	for i = nHalf to 0
-		if(count == i)			
+		if(count == nHalf - 1)			
 			arr1[i] = arr[count ]
 			count - 1
 		else if (count >= 0)
