@@ -1,0 +1,16 @@
+****Method 1 pseudo code****
+
+Method1(int arr1, int arr2, int n1, int n2){
+	int smallestD = infinity;
+	for i = 0 to n1
+		for j = 0 to n2
+			temp = abs( arr1[i] + arr2[j] )
+			if(temp < smallestD){
+				smallestD = temp;
+				store location of the number in the first list
+				store location of the number in the 2nd list
+			}
+		end
+	end
+	return location of the numbers and the smallestD to 0
+}

@@ -1,0 +1,74 @@
+#include <iostream>
+
+using namespace std;
+int method1(int arr1[], int arr2[], int n1, int n2){
+    int smallestD = 100;
+    int loc1 = 0;
+    int loc2 = 0;
+    for(int i = 0; i < n1; i++){
+        for(int j = 0; j < n2; j++){
+            int temp;
+            temp = abs(arr1[i] + arr2[j]);
+            if(temp < smallestD){
+                smallestD = temp;
+                loc1 = i;
+                loc2 = j;
+            }
+        }
+    }
+    cout << "Location in the first list: " << loc1 + 1 << endl;
+    cout << "Location in the 2nd list: " << loc2 + 1 << endl;
+    return smallestD;
+}
+
+void divAndCon(int arr[], int n){
+        int nHalf = n/2;
+        int arr1[5];
+        int arr2[5];
+        int count = nHalf-1;
+        //suffix array
+        for (int i = nHalf-1; i >= 0; i--){
+            if(count == nHalf-1){
+                arr1[i] = arr[count];
+                count--;
+                //cout << arr1[i] << ", ";
+            }else if (count >= 0){
+                arr1[i] = arr1[i+1] + arr[count];
+                //cout << "a[i+1]:" << arr1[i+1] << " + " << "arr[count]:" << arr[count] << arr1[i] << endl;
+                count--;
+                //cout << arr1[i] << ", ";
+            }
+        }
+        cout << endl;
+        //prefix array
+        count = 0;
+        for(int i = nHalf; i < n; i++){
+            if( i == nHalf){
+                arr2[count] = arr[i];
+                count++;
+            }else{
+                arr2[count] = arr2[count-1] + arr[i];
+                count++;
+            }
+        }
+        for(int i = 0; i < nHalf; i++){
+            cout << arr1[i] << ", ";
+        }
+        cout << endl;
+        for(int i = 0; i < nHalf; i++){
+            cout << arr2[i] << ", ";
+        }
+        cout << endl;
+        int result = method1(arr1, arr2, nHalf, nHalf);
+        cout << "closest-to-0: " << result << endl;
+}
+int main()
+{
+    //int arr1[5] = {22, -9, 32, -27, -53};
+    //int arr2[5] = {58, 52, 149, 56, 33};
+    int arr[10] = {31, -41, 59, 26, -53, 58, -6, 97, -93, -23};
+    divAndCon(arr, 10);
+    //int result = method1(arr1, arr2, 5, 5);
+    //cout << result << endl;
+    return 0;
+}
