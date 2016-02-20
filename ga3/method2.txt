@@ -1,0 +1,18 @@
+METHOD 2:
+
+SuffixPrefix(A[n], B[n])
+Sort(A);
+Sort(B);
+min=65535
+prev=65535
+for i=0 to n-1
+	for j=0 to n-1
+      		sum=abs(A[i] + B[j])
+         	if sum > prev	// The sum will now be going up because it they are sorted
+            		break
+		else
+			if sum < min
+				min=sum
+				iFinal=i
+				jFinal=j
+return min
