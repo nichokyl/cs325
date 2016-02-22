@@ -1,0 +1,12 @@
+Times every number in the A2 by -1
+Append the A2 to the end of the A1, making A3
+Create A4 array the same length as the A3 array
+Put 0s in the first half of A4 and 1s in the second
+Sort the A3 such that every time a switch is made, the A4 is switched as well
+For element 0 to n-1 of A4, i
+	If i != i+1
+		If abs( abs(A3[i]) – abs(A3[i+1]) ) 
+			best = abs( abs(A3[i]) – abs(A3[i+1]) )
+return best
+
+Run Time O(n2)
