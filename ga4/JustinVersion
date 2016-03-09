@@ -10,18 +10,19 @@ x5 = LpVariable("x5")
 q =  LpVariable("q")
 
 prob = LpProblem("myProblem", LpMinimize)
+
 # The objective function is added to 'prob' first
 prob += q
-#prob += (x0)+(x1 * int(columns[1]))+(x2*math.cos((2*math.pi*int(columns[1]))/(365.25)))+(x3*math.sin((2*math.pi*int(columns[1]))/(365.25)))+(x4*math.cos((2*math.pi*int(columns[1]))/(365.25*10.7)))+(x5*math.cos((2*math.pi*int(columns[1]))/(365.25*10.7)))
+
 # Thanks to senderle on Stack Overflow for help with I/O
 fi = open("Data.txt", "r")
 
 for columns in (row.strip().split("\t") for row in fi):
     #print columns[0] + "\t" + columns[1]
-
+    
     # The two constraints are entered
-    prob += -q + ((x0)+(x1 * int(columns[1]))+(x2*math.cos((2*math.pi*int(columns[1]))/(365.25)))+(x3*math.sin((2*math.pi*int(columns[1]))/(365.25)))+(x4*math.cos((2*math.pi*int(columns[1]))/(365.25*10.7)))+(x5*math.cos((2*math.pi*int(columns[1]))/(365.25*10.7)))) <= float(columns[0])
-    prob += -q - ((x0)+(x1 * int(columns[1]))+(x2*math.cos((2*math.pi*int(columns[1]))/(365.25)))+(x3*math.sin((2*math.pi*int(columns[1]))/(365.25)))+(x4*math.cos((2*math.pi*int(columns[1]))/(365.25*10.7)))+(x5*math.cos((2*math.pi*int(columns[1]))/(365.25*10.7)))) <= -float(columns[0])
+    prob += ((x0)+(x1 * int(columns[1]))+(x2*math.cos((2*math.pi*int(columns[1]))/(365.25)))+(x3*math.sin((2*math.pi*int(columns[1]))/(365.25)))+(x4*math.cos((2*math.pi*int(columns[1]))/(365.25*10.7)))+(x5*math.sin((2*math.pi*int(columns[1]))/(365.25*10.7)))) - float(columns[0]) <= q
+    prob += ((x0)+(x1 * int(columns[1]))+(x2*math.cos((2*math.pi*int(columns[1]))/(365.25)))+(x3*math.sin((2*math.pi*int(columns[1]))/(365.25)))+(x4*math.cos((2*math.pi*int(columns[1]))/(365.25*10.7)))+(x5*math.sin((2*math.pi*int(columns[1]))/(365.25*10.7)))) - float(columns[0]) >= -q
 
 # The problem data is written to an .lp file
 prob.writeLP("TempModel.lp")
